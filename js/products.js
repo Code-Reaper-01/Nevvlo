@@ -189,5 +189,24 @@ const products = [
         description: 'Natural and organic face cream with hyaluronic acid and vitamin E. Nourishes and hydrates skin.',
         isNew: false,
         affiliateLink: 'https://www.example.com/affiliate-link-10'
+    },
+     {
+        id: '1',
+        title: 'Face Wash',
+        category: 'beauty',
+        price: 59.99,
+        originalPrice: 79.99,
+        discount: 25,
+        rating: 4.5,
+        reviewCount: 1245,
+        image: 'assets/facewash.jpg',
+        images: [
+            'assets/facewash1.jpg',
+            'assets/facewash3.jpg',
+            'assets/'
+        ],
+        description: 'Make Your Skin Healthy',
+        isNew: true,
+        affiliateLink: 'https://amzn.to/3FD0Roh'
     }
 ];
