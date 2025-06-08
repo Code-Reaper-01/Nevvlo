@@ -193,7 +193,7 @@ const products = [
      {
         id: '1',
         title: 'Face Wash',
-        category: 'beauty',
+        category: 'Fashion',
         price: 59.99,
         originalPrice: 79.99,
         discount: 25,
