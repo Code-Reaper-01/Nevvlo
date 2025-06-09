@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nevvlo Blog</title>
+
+  <!-- Tailwind CSS CDN with custom color -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nevvlo: '#00cec9'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-4xl font-bold mb-8 text-center text-gray-900">
+      📝 Latest Posts from <span class="text-nevvlo">Nevvlo</span>
+    </h1>
+
+    <div id="blog-posts" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Posts will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    function extractImage(html) {
+      const match = html.match(/<img[^>]+src="([^">]+)"/);
+      return match ? match[1] : 'https://via.placeholder.com/600x400?text=Nevvlo+Blog';
+    }
+
+    function parseBlogData(json) {
+      const posts = json.feed.entry;
+      let output = '';
+
+      posts.forEach(post => {
+        const title = post.title.$t;
+        const link = post.link.find(l => l.rel === 'alternate').href;
+        const content = post.content.$t;
+        const shortText = content.replace(/<[^>]*>?/gm, '').slice(0, 150);
+        const imageUrl = extractImage(content);
+
+        output += `
+          <div class="bg-white rounded-2xl shadow transition hover:shadow-xl hover:ring-2 hover:ring-nevvlo overflow-hidden group">
+            <img src="${imageUrl}" alt="Post Image" class="w-full h-48 object-cover">
+            <div class="p-5">
+              <h2 class="text-xl font-semibold mb-2 text-blue-700 group-hover:text-nevvlo transition-colors">
+                <a href="${link}" target="_blank">${title}</a>
+              </h2>
+              <p class="text-sm text-gray-600">${shortText}...</p>
+              <a href="${link}" target="_blank" class="inline-block mt-3 text-blue-500 group-hover:text-nevvlo text-sm font-medium transition-colors">Read more →</a>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('blog-posts').innerHTML = output;
+    }
+
+    // Load Blogger feed using JSONP
+    const script = document.createElement('script');
+    script.src = "https://nevvlo.blogspot.com/feeds/posts/default?alt=json-in-script&callback=parseBlogData";
+    document.body.appendChild(script);
+  </script>
+
+</body>
+</html>
