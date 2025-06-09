@@ -427,16 +427,14 @@ function loadFeaturedProducts() {
     });
 }
 
-// Load AI recommendations
+
+// Load AI recommended products
 function loadAIRecommendations() {
-    const recommendationsGrid = document.getElementById('ai-recommendations-grid');
+    const aiGrid = document.getElementById('ai-recommendations-grid');
+    // Get 4 random products for recommendations
+    const recommendedProducts = [...products].sort(() => 0.5 - Math.random()).slice(0, 4);
     
-    // Simple AI logic: recommend products with high rating and discount
-    const recommendedProducts = [...products]
-        .sort((a, b) => (b.rating * (b.discount || 1)) - (a.rating * (a.discount || 1)))
-        .slice(0, 4);
-    
-    recommendationsGrid.innerHTML = recommendedProducts.map(product => `
+    aiGrid.innerHTML = recommendedProducts.map(product => `
         <div class="product-card">
             ${product.isNew ? '<span class="product-badge">New</span>' : ''}
             ${product.discount ? `<span class="product-badge" style="background-color: var(--success-color);">${product.discount}% OFF</span>` : ''}
@@ -486,39 +484,47 @@ function loadAIRecommendations() {
 }
 
 // Initialize the page
-document.addEventListener('DOMContentLoaded', () => {
+function initPage() {
     loadFeaturedProducts();
     loadAIRecommendations();
+}
+
+// Call initPage when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initPage);
+
+// Add to wishlist
+function addToWishlist(productId) {
+    if (!wishlist.includes(productId)) {
+        wishlist.push(productId);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        updateWishlistCount();
+        showNotification('Added to wishlist'); // Moved notification here
+    }
+}
+
+// Remove from wishlist
+function removeFromWishlist(productId) {
+    wishlist = wishlist.filter(id => id !== productId);
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+    updateWishlistDisplay();
+    showNotification('Removed from wishlist'); // Moved notification here
     
-    // Header scroll effect
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            document.querySelector('.header').classList.add('scrolled');
-        } else {
-            document.querySelector('.header').classList.remove('scrolled');
-        }
+    // Update wishlist buttons on product cards
+    document.querySelectorAll(`.product-wishlist[data-id="${productId}"]`).forEach(btn => {
+        btn.classList.remove('active');
     });
+}
+// In both loadFeaturedProducts() and loadAIRecommendations():
+button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const productId = button.getAttribute('data-id');
+    if (isInWishlist(productId)) {
+        removeFromWishlist(productId);
+        button.classList.remove('active');
+    } else {
+        addToWishlist(productId);
+        button.classList.add('active');
+    }
 });
 
-// Notification styles (added dynamically)
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-    .notification {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        background-color: var(--primary-color);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 4px;
-        box-shadow: var(--shadow-lg);
-        z-index: 1001;
-        transition: transform 0.3s ease;
-    }
-    
-    .notification.show {
-        transform: translateX(-50%) translateY(0);
-    }
-`;
-document.head.appendChild(notificationStyles);
