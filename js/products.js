@@ -1,4 +1,4 @@
-// Sample product data (in a real app, this might come from an API)
+
 const products = [
     {
         id: '1',
@@ -190,6 +190,7 @@ const products = [
         isNew: false,
         affiliateLink: 'https://www.example.com/affiliate-link-10'
     },
+
      {
         id: '1',
         title: 'Face Wash',
